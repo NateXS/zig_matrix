@@ -11,7 +11,7 @@ pub fn GenericMatrix(comptime dim: comptime_int, comptime Scalar: type) type {
         @compileError("Invalid matrix dimensions");
     }
 
-    return extern struct {
+    return struct {
         const Self = @This();
         pub const size = dim_col * dim_row;
         pub const dim_col = dim;
@@ -219,9 +219,9 @@ pub fn GenericMatrix(comptime dim: comptime_int, comptime Scalar: type) type {
 
             var result: @TypeOf(b) = undefined;
             if (is_vec) {
-                var sum: RowVec = RowVec.shuffle(b, undefined, [_]u32{0} ** dim_row).mul(a.col(0));
+                var sum: RowVec = RowVec.shuffle(b, undefined, @as([dim_row]u32, @splat(0))).mul(a.col(0));
                 inline for (1..dim_row) |row_idx| {
-                    const b_col_i = RowVec.shuffle(b, undefined, [_]u32{row_idx} ** dim_row);
+                    const b_col_i = RowVec.shuffle(b, undefined, @as([dim_row]u32, @splat(row_idx)));
                     const col_mul = b_col_i.mul(a.col(row_idx));
                     sum = sum.add(col_mul);
                 }
@@ -229,9 +229,9 @@ pub fn GenericMatrix(comptime dim: comptime_int, comptime Scalar: type) type {
             } else {
                 inline for (0..@TypeOf(b).dim_col) |col_idx| {
                     const b_col = b.col(col_idx);
-                    var sum: RowVec = RowVec.shuffle(b_col, undefined, [_]u32{0} ** dim_row).mul(a.col(0));
+                    var sum: RowVec = RowVec.shuffle(b_col, undefined, @as([dim_row]u32, @splat(0))).mul(a.col(0));
                     inline for (1..dim_row) |row_idx| {
-                        const b_col_i = RowVec.shuffle(b_col, undefined, [_]u32{row_idx} ** dim_row);
+                        const b_col_i = RowVec.shuffle(b_col, undefined, @as([dim_row]u32, @splat(row_idx)));
                         const col_mul = b_col_i.mul(a.col(row_idx));
                         sum = sum.add(col_mul);
                     }
@@ -310,7 +310,7 @@ pub fn GenericMatrix(comptime dim: comptime_int, comptime Scalar: type) type {
         }
 
         pub inline fn splat(value: Scalar) Self {
-            return .{ .e = .{RowVec.splat(value)} ** dim_col };
+            return .{ .e = @splat(RowVec.splat(value)) };
         }
 
         /// orthographic projection to NDC x=[-1, +1], y = [-1, +1] and z = [0, +1]

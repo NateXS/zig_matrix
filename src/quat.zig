@@ -8,7 +8,7 @@ pub fn GenericQuat(comptime Scalar: type) type {
     const Mat3 = GenericMatrix(3, Scalar);
     const Mat4 = GenericMatrix(4, Scalar);
 
-    return extern struct {
+    return struct {
         const Self = @This();
         const Elements = @Vector(4, Scalar);
         const EArray = [4]Scalar;

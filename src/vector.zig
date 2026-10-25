@@ -8,7 +8,7 @@ pub fn GenericVector(comptime dim_i: comptime_int, comptime Scalar: type) type {
         @compileError("Vector dimensions must be in range [2,4]");
     }
 
-    return extern struct {
+    return struct {
         const Self = @This();
         const Elements = @Vector(dim, Scalar);
         const EArray = [dim]Scalar;
